@@ -36,6 +36,14 @@ public class WSCaller {
         this.request.addProperty(p);
     }
 
+    public void addIntParam(String name, int value){
+        PropertyInfo p = new PropertyInfo();
+        p.name = name;
+        p.type = PropertyInfo.INTEGER_CLASS;
+        p.setValue(value);
+        this.request.addProperty(p);
+    }
+
     public String call(){
         SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
         envelope.setOutputSoapObject(this.request);

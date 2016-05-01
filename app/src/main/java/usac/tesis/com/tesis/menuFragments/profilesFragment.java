@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -139,7 +140,6 @@ public class profilesFragment extends Fragment {
         protected Void doInBackground(perfil... params) {
             Context ctx = getActivity().getApplicationContext();
             WSCaller caller = new WSCaller("ingresar_perfil");
-            GPSTracker tracker = new GPSTracker(ctx);
             Calendar calendar = Calendar.getInstance();
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(ctx);
 
@@ -153,10 +153,16 @@ public class profilesFragment extends Fragment {
             Log.d("POS",this.pos);
             Log.d("DIA_DEL_MES",dia_del_mes);
             Log.d("DIA",dia);
-            Log.d("PERFIL",params[0].getSaveString());
+            Log.d("PERFIL", params[0].getSaveString());
 
-            //LLAMAR AL SERVICIO
+            caller.addStringParam("arg0", id);
+            caller.addStringParam("arg1", hora);
+            caller.addStringParam("arg2", this.pos);
+            caller.addIntParam("arg3", Integer.parseInt(dia_del_mes)-1);
+            caller.addStringParam("arg4", params[0].getSaveString());
+            caller.addIntParam("arg5", Integer.parseInt(dia)-1);
 
+            caller.call();
             return null;
         }
     }

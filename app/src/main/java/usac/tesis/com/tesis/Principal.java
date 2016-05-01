@@ -155,7 +155,7 @@ public class Principal extends AppCompatActivity
     private void alarmMethod(){
         try{
             AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
-            int interval = 1000 * 60 * 60;
+            int interval = 1000 * 60 * 20;
 
             Intent intent = new Intent(this,monitoringService.class);
             this.pendingIntent = PendingIntent.getBroadcast(this,0,intent,0);
