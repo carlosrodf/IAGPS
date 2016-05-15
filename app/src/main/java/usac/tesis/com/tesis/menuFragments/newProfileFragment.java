@@ -99,8 +99,13 @@ public class newProfileFragment extends Fragment {
         @Override
         protected void onPostExecute(Boolean result) {
             showProgress(false);
-            clearForm();
-            Toast.makeText(getActivity().getApplicationContext(),"Perfil creado exitosamente",Toast.LENGTH_LONG).show();
+            if(result){
+                clearForm();
+                Toast.makeText(getActivity().getApplicationContext(),"Perfil creado exitosamente",Toast.LENGTH_LONG).show();
+            }else{
+                Toast.makeText(getActivity().getApplicationContext(),"Ocurrio un error.",Toast.LENGTH_LONG).show();
+            }
+
         }
 
         @Override

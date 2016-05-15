@@ -15,7 +15,7 @@ import java.io.IOException;
  */
 public class WSCaller {
 
-    private final String URL = "http://ec2-54-186-237-148.us-west-2.compute.amazonaws.com:8080/ws_tesis/tesis?WSDL";
+    private final String URL = "http://ec2-54-191-108-207.us-west-2.compute.amazonaws.com:8080/ws_tesis/tesis?WSDL";
     private final String NAMESPACE = "http://paquete1/";
     private String METHOD_NAME;
     private String SOAP_ACTION;
