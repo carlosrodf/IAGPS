@@ -30,6 +30,9 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText pass1View;
     private EditText pass2View;
 
+    private View progressView;
+    private View form;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +47,9 @@ public class RegisterActivity extends AppCompatActivity {
         this.nombreView = (EditText)findViewById(R.id.editName);
         this.pass1View = (EditText)findViewById(R.id.editPass1);
         this.pass2View = (EditText)findViewById(R.id.editPass2);
+
+        this.progressView = findViewById(R.id.register_progress);
+        this.form = findViewById(R.id.register_form);
 
         Button cancel = (Button)findViewById(R.id.regCancel);
         cancel.setOnClickListener(new View.OnClickListener() {
@@ -62,6 +68,11 @@ public class RegisterActivity extends AppCompatActivity {
                 attemptRegister();
             }
         });
+    }
+
+    private void showProgress(boolean show){
+        this.progressView.setVisibility(show ? View.VISIBLE : View.GONE);
+        this.form.setVisibility(show ? View.GONE : View.VISIBLE);
     }
 
     private void attemptRegister(){
@@ -85,25 +96,29 @@ public class RegisterActivity extends AppCompatActivity {
         }
 
         if(TextUtils.isEmpty(pass1)){
-            this.pass1View.setError("Este campo es obligatorio");
+            this.pass1View.setError(getString(R.string.error_field_required));
             focus = this.pass1View;
             cancel = true;
         }
 
         if(TextUtils.isEmpty(pass2)){
-            this.pass2View.setError("Este campo es obligatorio");
+            this.pass2View.setError(getString(R.string.error_field_required));
             focus = this.pass2View;
             cancel = true;
         }
 
         if(TextUtils.isEmpty(nombre)){
-            this.nombreView.setError("Este campo es obligatorio");
+            this.nombreView.setError(getString(R.string.error_field_required));
             focus = this.nombreView;
             cancel = true;
         }
 
         if(TextUtils.isEmpty(email)){
-            this.emailView.setError("Este campo es obligatorio");
+            this.emailView.setError(getString(R.string.error_field_required));
+            focus = this.emailView;
+            cancel = true;
+        } else if(!isEmailValid(email)){
+            this.emailView.setError(getString(R.string.error_invalid_email));
             focus = this.emailView;
             cancel = true;
         }
@@ -111,8 +126,13 @@ public class RegisterActivity extends AppCompatActivity {
         if(cancel){
             focus.requestFocus();
         }else{
+            showProgress(true);
             new AsyncCallWS().execute(email, pass1, nombre);
         }
+    }
+
+    private boolean isEmailValid(String email) {
+        return email.contains("@") && email.contains(".");
     }
 
     private class AsyncCallWS extends AsyncTask<String,Void,String> {
@@ -129,6 +149,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String result) {
+            showProgress(false);
             if(TextUtils.equals(result,"error")){
                 Toast.makeText(getApplicationContext(),"Fallo el registro",Toast.LENGTH_LONG).show();
             }else{

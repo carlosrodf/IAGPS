@@ -6,14 +6,19 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.SeekBar;
+import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.Toast;
+
+import org.w3c.dom.Text;
 
 import usac.tesis.com.tesis.Principal;
 import usac.tesis.com.tesis.R;
@@ -27,8 +32,10 @@ import usac.tesis.com.tesis.utils.WSCaller;
 public class newProfileFragment extends Fragment {
 
     private View progressView;
+    private View form;
+
     private EditText profileName;
-    private Switch vibrate;
+    private Spinner vibrate;
     private SeekBar bright;
     private SeekBar volume;
 
@@ -45,6 +52,7 @@ public class newProfileFragment extends Fragment {
 
         setListeners(view);
         this.progressView = view.findViewById(R.id.create_progress);
+        this.form = view.findViewById(R.id.scroll_newProfile_form);
 
         return view;
     }
@@ -66,30 +74,40 @@ public class newProfileFragment extends Fragment {
         create.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showProgress(true);
 
                 String nombre = profileName.getText().toString();
-                String vib = vibrate.isChecked()+"";
+                String vib = spinnerValue()+"";
                 String b = bright.getProgress()+"";
                 String vo = volume.getProgress()+"";
 
-                new profileCreateTask().execute(nombre,vib,vo,b);
+                if(TextUtils.isEmpty(nombre)){
+                    profileName.setError(getString(R.string.error_field_required));
+                    profileName.requestFocus();
+                }else {
+                    showProgress(true);
+                    new profileCreateTask().execute(nombre, vib, vo, b);
+                }
             }
         });
 
         this.profileName = (EditText)view.findViewById(R.id.profileName);
-        this.vibrate = (Switch)view.findViewById(R.id.vibrateSound);
+        this.vibrate = (Spinner)view.findViewById(R.id.vibrateSound);
         this.bright = (SeekBar)view.findViewById(R.id.brightnessBar);
         this.volume = (SeekBar)view.findViewById(R.id.volumeBar);
     }
 
+    private boolean spinnerValue(){
+        Log.d("Spinner",this.vibrate.getSelectedItem().toString());
+        return this.vibrate.getSelectedItem().toString().equals("Vibracion");
+    }
+
     private void showProgress(boolean show){
         this.progressView.setVisibility(show ? View.VISIBLE : View.GONE);
+        this.form.setVisibility(show ? View.GONE : View.VISIBLE);
     }
 
     private void clearForm(){
         this.profileName.setText("");
-        this.vibrate.setChecked(false);
         this.bright.setProgress(0);
         this.volume.setProgress(0);
     }
@@ -105,7 +123,6 @@ public class newProfileFragment extends Fragment {
             }else{
                 Toast.makeText(getActivity().getApplicationContext(),"Ocurrio un error.",Toast.LENGTH_LONG).show();
             }
-
         }
 
         @Override
@@ -116,8 +133,8 @@ public class newProfileFragment extends Fragment {
             perfil p = new perfil(params[0]+"~~"+params[1]+"~~"+params[2]+"~~"+params[3]);
 
             WSCaller caller = new WSCaller("set_perfil");
-            caller.addStringParam("arg0",userId+"");
-            caller.addStringParam("arg1",p.getSaveString());
+            caller.addStringParam("arg0", userId + "");
+            caller.addStringParam("arg1", p.getSaveString());
             String result = caller.call();
             return !result.equals("false");
         }
