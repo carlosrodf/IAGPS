@@ -41,9 +41,11 @@ public class Principal extends AppCompatActivity
         SharedPreferences.Editor editor = preferences.edit();
         int i = preferences.getInt("tesisLaunches",1);
         if(i==1){
-            alarmMethod();
-            editor.putInt("tesisLaunches",10);
+            //alarmMethod();
+            editor.putInt("tesisLaunches", 10);
             editor.commit();
+            Intent intent = new Intent(getApplicationContext(),DemoActivity.class);
+            startActivity(intent);
         }
 
         mapFragment mf = new mapFragment();
